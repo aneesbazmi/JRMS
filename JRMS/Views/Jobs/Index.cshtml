@@ -1,0 +1,95 @@
+﻿@model IEnumerable<EntityFramework.Job>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Jobb_Adverstisement_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Last_Date_Apply)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Scale)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Total_Seats)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total_Women_Seats)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total_Open_Merit_Seats)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Result_Declaration_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Posting_City_Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Is_Contract_Based)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Department)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Jobb_Adverstisement_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Last_Date_Apply)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Scale)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Total_Seats)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total_Women_Seats)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total_Open_Merit_Seats)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Result_Declaration_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Posting_City_Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Is_Contract_Based)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.Dept_Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Job_Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Job_Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Job_Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

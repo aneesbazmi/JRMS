@@ -1,0 +1,84 @@
+﻿@model EntityFramework.Job
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Job</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Job_Title" class="control-label"></label>
+                <input asp-for="Job_Title" class="form-control" />
+                <span asp-validation-for="Job_Title" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Job_Id" />
+            <div class="form-group">
+                <label asp-for="Jobb_Adverstisement_Date" class="control-label"></label>
+                <input asp-for="Jobb_Adverstisement_Date" class="form-control" />
+                <span asp-validation-for="Jobb_Adverstisement_Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job_Dept_Id" class="control-label"></label>
+                <select asp-for="Job_Dept_Id" class="form-control" asp-items="ViewBag.Job_Dept_Id"></select>
+                <span asp-validation-for="Job_Dept_Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job_Last_Date_Apply" class="control-label"></label>
+                <input asp-for="Job_Last_Date_Apply" class="form-control" />
+                <span asp-validation-for="Job_Last_Date_Apply" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job_Scale" class="control-label"></label>
+                <input asp-for="Job_Scale" class="form-control" />
+                <span asp-validation-for="Job_Scale" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job_Total_Seats" class="control-label"></label>
+                <input asp-for="Job_Total_Seats" class="form-control" />
+                <span asp-validation-for="Job_Total_Seats" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Total_Women_Seats" class="control-label"></label>
+                <input asp-for="Total_Women_Seats" class="form-control" />
+                <span asp-validation-for="Total_Women_Seats" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Total_Open_Merit_Seats" class="control-label"></label>
+                <input asp-for="Total_Open_Merit_Seats" class="form-control" />
+                <span asp-validation-for="Total_Open_Merit_Seats" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job_Result_Declaration_Date" class="control-label"></label>
+                <input asp-for="Job_Result_Declaration_Date" class="form-control" />
+                <span asp-validation-for="Job_Result_Declaration_Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job_Posting_City_Name" class="control-label"></label>
+                <input asp-for="Job_Posting_City_Name" class="form-control" />
+                <span asp-validation-for="Job_Posting_City_Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Is_Contract_Based" class="control-label"></label>
+                <input asp-for="Is_Contract_Based" class="form-control" />
+                <span asp-validation-for="Is_Contract_Based" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

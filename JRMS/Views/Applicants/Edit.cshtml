@@ -1,0 +1,69 @@
+﻿@model EntityFramework.Applicant
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Applicant</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="name" class="control-label"></label>
+                <input asp-for="name" class="form-control" />
+                <span asp-validation-for="name" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="ApplicantId" />
+            <div class="form-group">
+                <label asp-for="address" class="control-label"></label>
+                <input asp-for="address" class="form-control" />
+                <span asp-validation-for="address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email_Address" class="control-label"></label>
+                <input asp-for="Email_Address" class="form-control" />
+                <span asp-validation-for="Email_Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Marks_In_Matriculation" class="control-label"></label>
+                <input asp-for="Marks_In_Matriculation" class="form-control" />
+                <span asp-validation-for="Marks_In_Matriculation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Marks_In_Intermediate" class="control-label"></label>
+                <input asp-for="Marks_In_Intermediate" class="form-control" />
+                <span asp-validation-for="Marks_In_Intermediate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Marks_In_Batchelor" class="control-label"></label>
+                <input asp-for="Marks_In_Batchelor" class="form-control" />
+                <span asp-validation-for="Marks_In_Batchelor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Applicant_Gender" class="control-label"></label>
+                <input asp-for="Applicant_Gender" class="form-control" />
+                <span asp-validation-for="Applicant_Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="date_of_birth" class="control-label"></label>
+                <input asp-for="date_of_birth" class="form-control" />
+                <span asp-validation-for="date_of_birth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

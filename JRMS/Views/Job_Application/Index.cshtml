@@ -1,0 +1,59 @@
+﻿@model IEnumerable<EntityFramework.Job_Application>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Job_Application_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Payment_Method)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Payment_Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Applicant)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Job_Application_Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Payment_Method)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Payment_Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Applicant.Applicant_Gender)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Application_Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Application_Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Application_Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
