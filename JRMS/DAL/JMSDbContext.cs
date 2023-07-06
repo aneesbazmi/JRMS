@@ -9,6 +9,7 @@ namespace JRMS.DAL
         public JMSDbContext(DbContextOptions options) : base(options) {
             
         }
+
         public virtual DbSet<Applicant> applicants { get; set; }
         public virtual DbSet<Department> departments { get; set; }
         public virtual DbSet<Job> jobs { get; set; }

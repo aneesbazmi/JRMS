@@ -13,6 +13,7 @@ namespace EntityFramework
         [Required]
         [StringLength(50)]
         public string Job_Title { get; set; }
+        //yhunyh8yh8u0]
 
         [Key]
         public int Job_Id { get; set; }

@@ -5,5 +5,6 @@ namespace JRMS.AbstractionLayer
     public interface IApplicantRepository : IGenericRepository<Applicant>
     {
 
+
     }
 }

@@ -7,6 +7,7 @@ namespace EntityFramework
 
     public partial class Job_Application
     {
+        [ForeignKey("Job")]
         public int Job_Id { get; set; }
 
         [Key]

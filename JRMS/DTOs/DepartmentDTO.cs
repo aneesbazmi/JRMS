@@ -2,7 +2,7 @@
 
 namespace JRMS.DTOs
 {
-    public class Department
+    public class DepartmentDTO
     {
         public int Dept_id { get; set; }
         [Required]

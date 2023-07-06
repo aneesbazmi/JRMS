@@ -13,7 +13,7 @@ namespace JRMS
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            //builder.Services./
+            
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<JMSDbContext>(options => 
             options.UseSqlServer(builder.Configuration.GetConnectionString("JMSDbConnectionString")));
@@ -23,6 +23,14 @@ namespace JRMS
             builder.Services.AddScoped<IApplicantRepository, ApplicantRepository>();    
             builder.Services.AddScoped<UnitOfWork.IUnitOfWork,  UnitOfWork.UnitOfWork>();
 
+
+
+            //adding automapper configurationsss....
+
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+
+            
 
             var app = builder.Build();
 
