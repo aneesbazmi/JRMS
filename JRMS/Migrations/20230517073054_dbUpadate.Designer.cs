@@ -4,6 +4,7 @@ using JRMS.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JRMS.Migrations
 {
     [DbContext(typeof(JMSDbContext))]
-    partial class JMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230517073054_dbUpadate")]
+    partial class dbUpadate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,6 +176,9 @@ namespace JRMS.Migrations
                     b.Property<int>("Job_Id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Job_Id1")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Payment_Amount")
                         .HasColumnType("int");
 
@@ -185,7 +191,7 @@ namespace JRMS.Migrations
 
                     b.HasIndex("Applicant_Id");
 
-                    b.HasIndex("Job_Id");
+                    b.HasIndex("Job_Id1");
 
                     b.ToTable("job_application");
                 });
@@ -257,7 +263,7 @@ namespace JRMS.Migrations
 
                     b.HasOne("EntityFramework.Job", "Job")
                         .WithMany("Job_Application")
-                        .HasForeignKey("Job_Id")
+                        .HasForeignKey("Job_Id1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

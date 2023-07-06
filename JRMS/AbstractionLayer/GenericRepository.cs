@@ -16,6 +16,7 @@ namespace JRMS.AbstractionLayer
         public void Add(T entity)
         {
             _dbSet.Add(entity);
+            
         }
 
         public void Delete(int Id)

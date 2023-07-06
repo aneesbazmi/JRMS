@@ -14,6 +14,7 @@ namespace JRMS.Controllers
     {
         private readonly JMSDbContext _context;
 
+
         public Black_Listed_CandidatesController(JMSDbContext context)
         {
             _context = context;

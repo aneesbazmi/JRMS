@@ -24,10 +24,6 @@ namespace JRMS.UnitOfWork
             this.JobRepository = jobRepository;
             this.JobApplicationRepository = jobApplicationRepository;
             this.applicantRepository = applicantRepository;
-
-
-
-
             this._context = context;
         }
         public void SaveChanges()

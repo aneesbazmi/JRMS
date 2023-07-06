@@ -8,16 +8,21 @@ using Microsoft.EntityFrameworkCore;
 using EntityFramework;
 using JRMS.DAL;
 using JRMS.DTOs;
+using AutoMapper;
+using System.Linq.Expressions;
+using System.Data.Common;
 
 namespace JRMS.Controllers
 {
     public class JobsController : Controller
     {
         private readonly UnitOfWork.IUnitOfWork _UnitOfWork;
+        private readonly IMapper _mapper;
 
-        public JobsController(UnitOfWork.IUnitOfWork uow)
+        public JobsController(UnitOfWork.IUnitOfWork uow, IMapper mapper)
         {
             _UnitOfWork = uow;
+            _mapper = mapper;
         }
 
         // GET: Jobs
@@ -28,20 +33,34 @@ namespace JRMS.Controllers
         }
 
         // GET: Jobs/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public  IActionResult Details(int? id)
         {
-            if (id == null || _UnitOfWork.JobRepository.IsNull())
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var JobByDepartment = _UnitOfWork.JobRepository.BringJobDepartment(id);
-            if (JobByDepartment == null)
+            try
             {
-                return NotFound();
-            }
 
-            return View(JobByDepartment);
+                var JobByDepartment = _UnitOfWork.JobRepository.BringJobDepartment(id);
+                if (JobByDepartment == null)
+                {
+                    return NotFound();
+                }
+
+                return View(JobByDepartment);
+
+            }
+            catch(DbException ex)
+            {
+                return Problem(ex.Message); 
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+           
         }
 
         // GET: Jobs/Create
@@ -60,23 +79,28 @@ namespace JRMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(JobDto _jobDto)
         {
-            if (ModelState.IsValid)
+            try
             {
-                Job job = new Job();
-                job.Job_Title = _jobDto.Job_Title;
-                job.Job_Result_Declaration_Date = _jobDto.Job_Result_Declaration_Date;
-                job.Job_Last_Date_Apply = _jobDto.Job_Last_Date_Apply;
-                job.Is_Contract_Based = _jobDto.Is_Contract_Based;
-                job.Total_Women_Seats = _jobDto.Total_Women_Seats;
-                job.Job_Scale = _jobDto.Job_Scale;
-                job.Job_Dept_Id = _jobDto.Job_Dept_Id;
-                job.Total_Open_Merit_Seats = _jobDto.Total_Open_Merit_Seats;
-                job.Job_Total_Seats = _jobDto.Job_Total_Seats;
-                job.Job_Posting_City_Name = _jobDto.Job_Posting_City_Name;
-                job.Job_Dept_Id = _jobDto.Job_Dept_Id;
-                _UnitOfWork.JobRepository.Add(job);
-                _UnitOfWork.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    Job job = new Job();
+                    var jb = _mapper.Map<Job>(_jobDto);
+                    _UnitOfWork.JobRepository.Add(jb);
+                    _UnitOfWork.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                
+            }
+
+            catch(DbUpdateConcurrencyException ex)
+            {
+                return Problem(ex.Message);    
+            }
+            
+            catch(Exception ex)
+            {
+                return Problem(ex.Message);
             }
             ViewData["Job_Dept_Id"] = new SelectList(_UnitOfWork.JobRepository.GetAllJobs(), "Dept_Id", "Dept_Id", _jobDto.Job_Dept_Id);
             return View(_jobDto);
@@ -95,6 +119,7 @@ namespace JRMS.Controllers
             {
                 return NotFound();
             }
+            var data = _UnitOfWork.DepartmentRepository.GetAll();
             ViewData["Job_Dept_Id"] = new SelectList(_UnitOfWork.DepartmentRepository.GetAll(), "Dept_Id", "Dept_Id", job.Job_Dept_Id);
             return View(job);
         }

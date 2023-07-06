@@ -9,16 +9,21 @@ using EntityFramework;
 using JRMS.DAL;
 using JRMS.DTOs;
 using JRMS.UnitOfWork;
+using AutoMapper;
+using System.Data.Common;
+using System.Linq.Expressions;
 
 namespace JRMS.Controllers
 {
     public class ApplicantsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ApplicantsController(IUnitOfWork unitOfWork)
+        public ApplicantsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork= unitOfWork;
+            _mapper= mapper;
         }
 
         // GET: Applicants
@@ -32,12 +37,12 @@ namespace JRMS.Controllers
         // GET: Applicants/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _unitOfWork.applicantRepository.IsNull())
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var applicant  = _unitOfWork.applicantRepository.GetByID(id);
+            var applicant  =  _unitOfWork.applicantRepository.GetByID(id);
             if (applicant == null)
             {
                 return NotFound();
@@ -62,15 +67,8 @@ namespace JRMS.Controllers
             if (ModelState.IsValid)
             {
                 Applicant applicant = new Applicant();
-                applicant.name = _ApplicantDto.name;
-                applicant.Applicant_Gender = _ApplicantDto.Applicant_Gender;
-                applicant.address = _ApplicantDto.address;
-                applicant.Email_Address = _ApplicantDto.Email_Address;
-                applicant.date_of_birth = _ApplicantDto.date_of_birth;
-                applicant.Marks_In_Matriculation = _ApplicantDto.Marks_In_Matriculation;
-                applicant.Marks_In_Intermediate = _ApplicantDto.Marks_In_Intermediate;
-                applicant.Marks_In_Batchelor = _ApplicantDto.Marks_In_Batchelor;
-
+                var app = _mapper.Map<Applicant>(_ApplicantDto);
+                    
                 _unitOfWork.applicantRepository.Add(applicant);
                 _unitOfWork.SaveChanges();
                 return RedirectToAction(nameof(Index));
@@ -81,17 +79,27 @@ namespace JRMS.Controllers
         // GET: Applicants/Edit/5
         public IActionResult Edit(int? id)
         {
-            if (id == null || _unitOfWork.applicantRepository.IsNull())
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var applicant = _unitOfWork.applicantRepository.GetByID(id);
-            if (applicant == null)
+            try
             {
-                return NotFound();
+                var applicant = _unitOfWork.applicantRepository.GetByID(id);
+                if (applicant == null)
+                {
+                    return NotFound();
+                }
+                return View(applicant);
             }
-            return View(applicant);
+            catch (DbException DbExcep) { return Problem(DbExcep.Message); }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);  
+            }
+            
+            
         }
 
         // POST: Applicants/Edit/5
@@ -103,6 +111,11 @@ namespace JRMS.Controllers
         {
             if (id != _ApplicantDto.ApplicantId)
             {
+                return BadRequest("ID does not match with the ID provided the DTO");
+            }
+
+            if (!ApplicantExists(_ApplicantDto.ApplicantId))
+            {
                 return NotFound();
             }
 
@@ -111,28 +124,13 @@ namespace JRMS.Controllers
                 try
                 {
                     Applicant applicant = new Applicant();
-                    applicant.ApplicantId = _ApplicantDto.ApplicantId;  
-                    applicant.name = _ApplicantDto.name;
-                    applicant.Applicant_Gender = _ApplicantDto.Applicant_Gender;
-                    applicant.address = _ApplicantDto.address;
-                    applicant.Email_Address = _ApplicantDto.Email_Address;
-                    applicant.date_of_birth = _ApplicantDto.date_of_birth;
-                    applicant.Marks_In_Matriculation = _ApplicantDto.Marks_In_Matriculation;
-                    applicant.Marks_In_Intermediate = _ApplicantDto.Marks_In_Intermediate;
-                    applicant.Marks_In_Batchelor = _ApplicantDto.Marks_In_Batchelor;
+                    var app = _mapper.Map<Applicant>(_ApplicantDto);
                     _unitOfWork.applicantRepository.Add(applicant);
                     _unitOfWork.SaveChanges();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
-                    if (!ApplicantExists(_ApplicantDto.ApplicantId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return Problem(ex.Message);
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -142,9 +140,9 @@ namespace JRMS.Controllers
         // GET: Applicants/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _unitOfWork.applicantRepository.IsNull())
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var applicant = _unitOfWork.applicantRepository.GetByID(id);
@@ -161,18 +159,36 @@ namespace JRMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_unitOfWork.applicantRepository.IsNull())
+            //if (_unitOfWork.applicantRepository.IsNull())
+            //{
+            //    return Problem("Entity set 'JMSDbContext.applicants'  is null.");
+            //}
+
+            try
             {
-                return Problem("Entity set 'JMSDbContext.applicants'  is null.");
-            }
-            var applicant = _unitOfWork.applicantRepository.GetByID(id);
-            if (applicant != null)
-            {
-                _unitOfWork.applicantRepository.Delete(id);
+                var applicant = _unitOfWork.applicantRepository.GetByID(id);
+                if (applicant != null)
+                {
+                    _unitOfWork.applicantRepository.Delete(id);
+                    _unitOfWork.SaveChanges();
+                }
+                return RedirectToAction(nameof(Index));
+                
             }
             
-           _unitOfWork.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            catch(DbUpdateConcurrencyException _dbupdateConcurrencyException)
+            {
+                return Problem(_dbupdateConcurrencyException.Message);
+            }
+            catch (DbException _dbex)
+            {
+                return Problem(_dbex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+           
         }
 
         private bool ApplicantExists(int id)

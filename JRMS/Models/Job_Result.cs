@@ -23,5 +23,6 @@ namespace EntityFramework
         public int Total_Marks_Out_Of_200 { get; set; }
 
         public virtual Job Job { get; set; }
+        public virtual Applicant applicant { get; set; }
     }
 }

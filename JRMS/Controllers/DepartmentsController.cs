@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EntityFramework;
 using JRMS.DAL;
-using Dept = JRMS.DTOs.Department;
+using EntityFramework;
+using JRMS.DTOs;
 using JRMS.AbstractionLayer;
 using JRMS.UnitOfWork;
 using System.Runtime.Intrinsics.Arm;
+using AutoMapper;
+using JRMS.DTOs;
+using EntityFramework;
 
 namespace JRMS.Controllers
 {
@@ -18,10 +21,19 @@ namespace JRMS.Controllers
     {
         private readonly JMSDbContext _dbContext;
         private readonly UnitOfWork.IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public DepartmentsController(IUnitOfWork unitOfWork)
+
+        //user/1/tweets
+
+        //tweets/1/
+
+
+
+        public DepartmentsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
        // GET: Departments
@@ -35,9 +47,11 @@ namespace JRMS.Controllers
         //GET: Departments/Details/5
         public IActionResult Details(int? id)
         {
-            if (id == null || _unitOfWork.DepartmentRepository.GetAll() == null)
+           
+           
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
 
@@ -62,26 +76,46 @@ namespace JRMS.Controllers
 
        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Dept department)
+        public async Task<IActionResult> Create(DepartmentDTO dTO)
         {
 
             if (ModelState.IsValid)
             {
-                Department d = new Department();
-                d.Dept_Name = department.Dept_Name;
-                _unitOfWork.DepartmentRepository.Add(d);
-                _unitOfWork.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                Department dept = new Department();
+                var d = _mapper.Map   <DepartmentDTO, Department>(dTO);
+
+
+                //DepartmentDTO d  = new DepartmentDTO();
+                //d.Dept_Name = department.Dept_Name;
+
+                try
+                {
+                    _unitOfWork.DepartmentRepository.Add(d);
+                    _unitOfWork.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+
+                }
+                catch (DbUpdateException ex)
+                {
+                    return Problem(ex.Message);
+
+                }
+                catch(Exception ex)
+                {
+                    return Problem("something went wrong in processing the Reqeust");
+                }
+
+                
             }
-            return View(department);
+            return View(dTO);
         }
 
        // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _unitOfWork.DepartmentRepository.GetAll() == null)
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var department =  _unitOfWork.DepartmentRepository.GetByID(id);
@@ -97,9 +131,13 @@ namespace JRMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
          [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Dept department)
+        public async Task<IActionResult> Edit(int id, DepartmentDTO DeptdTO)
         {
-            if (id != department.Dept_id)
+            if (id != DeptdTO.Dept_id)
+            {
+                return BadRequest("ID does not match the object sent");
+            }
+            if (!DepartmentExists((DeptdTO.Dept_id)))
             {
                 return NotFound();
             }
@@ -109,35 +147,29 @@ namespace JRMS.Controllers
                 try
                 {
 
-                    Department d = new Department {Dept_Id = department.Dept_id, Dept_Name = department.Dept_Name };
+                    var d = _mapper.Map<DepartmentDTO, Department>(DeptdTO);
 
                     _unitOfWork.DepartmentRepository.Update(d);
 
                     _unitOfWork.SaveChanges();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException dbconExce)
                 {
-                    if (!DepartmentExists((department.Dept_id)))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return Problem(dbconExce.Message);
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return View(DeptdTO);
         }
 
         //GET: Departments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _unitOfWork.DepartmentRepository.IsNull())
+            if (id == null)
             {
-                return NotFound();
+                return BadRequest();
             }
+
 
             var department = _unitOfWork.DepartmentRepository.GetByID(id);
             if (department == null)
@@ -153,18 +185,27 @@ namespace JRMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_unitOfWork.DepartmentRepository.IsNull())
+            //    if (_unitOfWork.DepartmentRepositor)
+            //    {
+            //        return Problem("Entity set 'JMSDbContext.departments'  is null.");
+            //    }
+            try
             {
-                return Problem("Entity set 'JMSDbContext.departments'  is null.");
-            }
-            var department = _unitOfWork.DepartmentRepository.GetByID(id);
-            if (department != null)
-            {
-                _unitOfWork.DepartmentRepository.Delete(department.Dept_Id);
-            }
+                var department = _unitOfWork.DepartmentRepository.GetByID(id);
+                if (department != null)
+                {
+                    _unitOfWork.DepartmentRepository.Delete(department.Dept_Id);
+                    _unitOfWork.SaveChanges();
+                }
 
-            _unitOfWork.SaveChanges();
-            return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return Problem(ex.Message);
+            }
+           
         }
 
         private bool DepartmentExists(int id)
